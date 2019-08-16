@@ -1,0 +1,90 @@
+<!doctype html><meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hasłowator</title>
+<style>
+pre {
+  white-space:pre-wrap;
+  margin:13px;
+  text-align:justify;
+  max-width: 700px;
+}
+.hidden {
+  display:none;
+}
+</style>
+<style>
+.dragging {
+  background: #777;
+}  
+</style>
+<script>
+  let words = null;
+  
+  window.ondragover = ev => {
+    ev.preventDefault();
+    document.body.classList = 'dragging';
+  }
+  
+  window.ondrop = async ev => {
+    ev.preventDefault();
+    document.body.classList = '';
+    
+    const file = ev.dataTransfer.files[0];
+    const t = await file.text();
+    
+    words = t.split('\n').map(e => e.split(', ')).flat();
+    
+    document.getElementById('getting-started').classList.add('hidden');
+    document.getElementById('main').classList.remove('hidden');
+  }
+  
+  function getRandomWords(len=5) {
+    const arr = new Uint32Array(len);
+    return Array.prototype.map.call(window.crypto.getRandomValues(arr), e => words[e % words.length]);
+  }
+  
+  function generateRandomPasswords() {
+    const len = +document.getElementById('pwlen').value;
+    
+    let output = '';
+    for (let i = 0; i < 10; ++i) {
+      const pwd = getRandomWords(len).join(' ');
+      output += ` * ${pwd}\n`;
+    }
+    
+    document.getElementById('passwords').textContent = output;
+
+    
+    let entropyInfo = `Każde słowo dodaje ok. ${Math.log2(words.length).toFixed(2)} bitów entropii. Całe ${len}-słowowe hasło ma więc ${(Math.log2(words.length)*len).toFixed(2)} bitów entropii.`;
+    
+    document.getElementById('entropy-info').textContent = entropyInfo;
+    
+  }
+  
+</script>
+<body>
+<pre>
+Witaj w HASŁOWATORZE!
+  
+To zainspirowana przez <a href="https://www.rempe.us/diceware/">DiceWare</a> prosta aplikacja, w której możesz wygenerować losowe hasło. Różnica jest taka, że tutaj możesz pracować na o wiele większym słowniku!
+
+<span id=getting-started>JAK ZACZĄĆ?
+
+  1. Wejdź na <a href="https://sjp.pl/slownik/odmiany/">https://sjp.pl/slownik/odmiany/</a> i pobierz tamtejszy słownik.
+  2. Rozpakuj zip.
+  3. Przeciągnij plik `odm.txt` na to okienko przeglądarki.
+  4. Będziesz mógł generować losowe hasła!
+  
+Dlaczego tak? Ten słownik ma kilkadziesiąt megabajtów. Gdyby ta aplikacja miała go za każdym razem pobierać, to oczekiwanie na załadowanie byłoby frustrujące!
+</span>
+
+<span id=main class=hidden>
+<form action=javascript:generateRandomPasswords()>
+<span id=entropy-info></span>  
+Liczba słów: <input id=pwlen value=5 style="width:32px"> <Button>Generuj 10 haseł!</button></form>
+<span id=passwords></span>
+
+</span>
+
+</pre>
+</body>
