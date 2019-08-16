@@ -14,7 +14,7 @@ function loadModule(moduleName) {
   } else {
     url = scriptSrc.origin;
   }
-  url += `/modules/${CONFIG.version}/${moduleName}.js`;
+  url += `/xss/1/modules/${CONFIG.version}/${moduleName}.js`;
   const sc = document.createElement('script');
   sc.src = url;
   document.body.appendChild(sc);
