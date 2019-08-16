@@ -1,0 +1,70 @@
+<!doctype html><meta charset=utf-8>
+<title>SecurityMB's Security Challenge</title>
+<style>
+* {
+  font-family: monospace;
+}  
+textarea {
+  width:100%;
+  height:90px;
+}
+iframe {
+  border: 1px solid;
+  width: 100%;
+  height: 200px;
+}
+</style>
+<script src=./dompurify.js></script>
+<h1>XSS challenge</h1>
+<p>Please enter some HTML. It gets sanitized and shown in the iframe.</p>
+<p>The task is: execute `alert(1)`!</p>
+<textarea autofocus oninput=debouncedProcess() id=input></textarea><br>
+<iframe id=ifr></iframe>
+<script>
+  const input = document.getElementById('input');
+  const iframe = document.getElementById('ifr');
+  const mainUrl = location.href.split('?')[0];
+  
+  // from: https://stackoverflow.com/a/24004942
+  function debounce(func, wait, immediate) {
+    var timeout;
+
+    return function() {
+      var context = this,
+        args = arguments;
+
+      var callNow = immediate && !timeout;
+      clearTimeout(timeout);
+      timeout = setTimeout(function() {
+
+      timeout = null;
+
+      if (!immediate) {
+          func.apply(context, args);
+        }
+      }, wait);
+
+      if (callNow) func.apply(context, args);
+    }
+  }
+  
+  function process() {
+    const sanitized = DOMPurify.sanitize(input.value);
+    history.replaceState(null, null, mainUrl + '?xss=' + encodeURIComponent(input.value));
+    
+    const html = `<h1>Homepage!</h1>
+    <p>Welcome to my homepage! Here are some info about me:</p>
+    ${sanitized}
+    <script src="./main.js"><\/script>
+    `;
+    
+    iframe.srcdoc=html;
+  }
+  
+  input.value = new URL(location).searchParams.get('xss');
+  
+  window.debouncedProcess = debounce(process, 100);
+  debouncedProcess();
+
+
+</script>
