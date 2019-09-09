@@ -1,6 +1,6 @@
 <!doctype html><meta charset=utf-8>
 <title>SecurityMB's Security Challenge</title>
-<meta http-equiv=Content-Security-Policy content="script-src pastebin.com/how-can-i-escape-this/">
+<meta http-equiv=Content-Security-Policy content="script-src pastebin.com/how-can-i-escape-this/ 'nonce-abcd'">
 <style>
 * {
   font-family: monospace;
@@ -15,13 +15,13 @@ iframe {
   height: 200px;
 }
 </style>
-<script src=./dompurify.js></script>
+<script src=./dompurify.js nonce=abcd></script>
 <h1>XSS challenge</h1>
 <p>Please enter some HTML. It gets sanitized and shown in the iframe.</p>
 <p>The task is: execute `alert(1)`!</p>
 <textarea autofocus oninput=debouncedProcess() id=input></textarea><br>
 <iframe id=ifr></iframe>
-<script>
+<script nonce=abcd>
   const input = document.getElementById('input');
   const iframe = document.getElementById('ifr');
   const mainUrl = location.href.split('?')[0];
