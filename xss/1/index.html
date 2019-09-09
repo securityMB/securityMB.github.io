@@ -1,6 +1,5 @@
 <!doctype html><meta charset=utf-8>
 <title>SecurityMB's Security Challenge</title>
-<meta http-equiv=Content-Security-Policy content="script-src pastebin.com/how-can-i-escape-this/ 'nonce-abcd'">
 <style>
 * {
   font-family: monospace;
@@ -53,7 +52,9 @@ iframe {
     const sanitized = DOMPurify.sanitize(input.value);
     history.replaceState(null, null, mainUrl + '?xss=' + encodeURIComponent(input.value));
     
-    const html = `<h1>Homepage!</h1>
+    const html = `
+<meta http-equiv=Content-Security-Policy content="script-src pastebin.com/how-can-i-escape-this/ 'self'">
+<h1>Homepage!</h1>
     <p>Welcome to my homepage! Here are some info about me:</p>
     ${sanitized}
     <script src="./main.js"><\/script>
