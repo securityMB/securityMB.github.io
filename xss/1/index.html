@@ -16,8 +16,13 @@ iframe {
 </style>
 <script src=./dompurify.js nonce=abcd></script>
 <h1>XSS challenge</h1>
-<p>Please enter some HTML. It gets sanitized and shown in the iframe.</p>
-<p>The task is: execute `alert(1)`!</p>
+<p><b>Rules:</b></p>
+<ul>
+<li>Please enter some HTML. It gets sanitized and shown in the iframe.</li>
+<li>The task is: execute alert(1) (it must actually execute so you have to bypass CSP as well).</li>
+<li>The solution must work on current version of one major browser (Chrome, Firefox, Safari).</li>
+<li>If you find a solution, please DM me at Twitter: <a href="https://twitter.com/SecurityMB">@SecurityMB</a>.</li>
+</ul>
 <textarea autofocus oninput=debouncedProcess() id=input></textarea><br>
 <iframe id=ifr></iframe>
 <script nonce=abcd>
@@ -53,11 +58,11 @@ iframe {
     history.replaceState(null, null, mainUrl + '?xss=' + encodeURIComponent(input.value));
     
     const html = `
-<meta http-equiv=Content-Security-Policy content="script-src pastebin.com/how-can-i-escape-this/ 'self'">
+<meta http-equiv=Content-Security-Policy content="script-src https://pastebin.com/how-can-i-escape-this/ 'nonce-xyz'">
 <h1>Homepage!</h1>
     <p>Welcome to my homepage! Here are some info about me:</p>
     ${sanitized}
-    <script src="./main.js"><\/script>
+    <script nonce=xyz src="./main.js"><\/script>
     `;
     
     iframe.srcdoc=html;
