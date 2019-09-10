@@ -58,7 +58,7 @@ iframe {
     history.replaceState(null, null, mainUrl + '?xss=' + encodeURIComponent(input.value));
     
     const html = `
-<meta http-equiv=Content-Security-Policy content="script-src https://pastebin.com/how-can-i-escape-this/ 'nonce-xyz'">
+<meta http-equiv=Content-Security-Policy content="script-src https://pastebin.com/how-can-i-escape-this/ 'nonce-xyz' https://securitymb.github.io/xss/1/modules/v20190816/">
 <h1>Homepage!</h1>
     <p>Welcome to my homepage! Here are some info about me:</p>
     ${sanitized}
