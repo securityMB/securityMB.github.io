@@ -35,9 +35,11 @@ iframe {
   <li><a href="https://twitter.com/RootEval">@RootEval</a></li>
   <li><a href="https://twitter.com/BenHayak">@BenHayak</a></li>
   <li><a href="https://twitter.com/insertscript">@insertScript</a> and <a href="https://twitter.com/garethheyes">@garethheyes</a></li>
+  <li><a href="https://twitter.com/sirdarckcat">@sirdarckcat</a></li>
   
 </ul>
 <textarea autofocus oninput=debouncedProcess() id=input></textarea><br>
+Length of the solution URL: <span id=len></span><br>
 <iframe id=ifr></iframe>
 <script nonce=abcd>
   const input = document.getElementById('input');
@@ -80,6 +82,7 @@ iframe {
     `;
     
     iframe.srcdoc=html;
+    len.textContent = location.href.length;
   }
   
   input.value = new URL(location).searchParams.get('xss');
