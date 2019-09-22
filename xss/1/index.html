@@ -14,7 +14,7 @@ iframe {
   height: 200px;
 }
 </style>
-<script src=./dompurify.js nonce=abcd></script>
+<script src=./dompurify-2.0.1.js nonce=abcd></script>
 <h1>XSS challenge</h1>
 <p><b>Rules:</b></p>
 <ul>
@@ -22,7 +22,9 @@ iframe {
 <li>The task is: execute alert(1) (it must actually execute so you have to bypass CSP as well).</li>
 <li>The solution must work on current version of at least one major browser (Chrome, Firefox, Safari, Edge).</li>
 <li>If you find a solution, please DM me at Twitter: <a href="https://twitter.com/SecurityMB">@SecurityMB</a>.</li>
+<li>DOMPurify has been updated to 2.0.1 so you cannot exploit <a href=https://twitter.com/cure53berlin/status/1174617047076147202>the latest mXSS</a>.</li>
 </ul>
+
 <p><b>Solvers:</b></p>
 <ul>
   <li><a href="https://twitter.com/bonaff3">@bonaff3</a></li>
@@ -40,7 +42,7 @@ iframe {
 </ul>
 <textarea autofocus oninput=debouncedProcess() id=input></textarea><br>
 Length of the solution URL: <span id=len></span><br>
-<iframe id=ifr></iframe>
+<iframe sandbox="allow-scripts allow-popups" id=ifr></iframe>
 <script nonce=abcd>
   const input = document.getElementById('input');
   const iframe = document.getElementById('ifr');
