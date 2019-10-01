@@ -14,7 +14,7 @@ iframe {
   height: 200px;
 }
 </style>
-<script src=./dompurify.js nonce=abcd></script>
+<script src=./dompurify-2.0.1.js nonce=abcd></script>
 <h1>XSS challenge</h1>
 <p><b>Rules:</b></p>
 <ul>
@@ -24,6 +24,7 @@ iframe {
 <li><s>If you find a solution, please DM me at Twitter: <a href="https://twitter.com/SecurityMB">@SecurityMB</a>.</s></li>
 <li>The challenge is over! <a href=https://twitter.com/terjanq>@terjanq</a> made <a href=https://medium.com/@terjanq/dom-clobbering-techniques-8443547ebe94>a great write up</a>!</li>
 </ul>
+
 <p><b>Solvers:</b></p>
 <ul>
   <li><a href="https://twitter.com/bonaff3">@bonaff3</a></li>
@@ -41,7 +42,7 @@ iframe {
 </ul>
 <textarea autofocus oninput=debouncedProcess() id=input></textarea><br>
 Length of the solution URL: <span id=len></span><br>
-<iframe id=ifr></iframe>
+<iframe sandbox="allow-scripts allow-modals" id=ifr></iframe>
 <script nonce=abcd>
   const input = document.getElementById('input');
   const iframe = document.getElementById('ifr');

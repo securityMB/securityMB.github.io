@@ -23,7 +23,7 @@ var freeze$2 = Object.freeze || function (x) {
   return x;
 };
 
-var html$1 = freeze$2(['accept', 'action', 'align', 'alt', 'autocomplete', 'background', 'bgcolor', 'border', 'cellpadding', 'cellspacing', 'checked', 'cite', 'class', 'clear', 'color', 'cols', 'colspan', 'controls', 'coords', 'crossorigin', 'datetime', 'default', 'dir', 'disabled', 'download', 'enctype', 'face', 'for', 'headers', 'height', 'hidden', 'high', 'href', 'hreflang', 'id', 'integrity', 'ismap', 'label', 'lang', 'list', 'loop', 'low', 'max', 'maxlength', 'media', 'method', 'min', 'multiple', 'name', 'noshade', 'novalidate', 'nowrap', 'open', 'optimum', 'pattern', 'placeholder', 'poster', 'preload', 'pubdate', 'radiogroup', 'readonly', 'rel', 'required', 'rev', 'reversed', 'role', 'rows', 'rowspan', 'spellcheck', 'scope', 'selected', 'shape', 'size', 'sizes', 'span', 'srclang', 'start', 'src', 'srcset', 'step', 'style', 'summary', 'tabindex', 'title', 'type', 'usemap', 'valign', 'value', 'width', 'xmlns']);
+var html$1 = freeze$2(['accept', 'action', 'align', 'alt', 'autocomplete', 'background', 'bgcolor', 'border', 'cellpadding', 'cellspacing', 'checked', 'cite', 'class', 'clear', 'color', 'cols', 'colspan', 'controls', 'coords', 'crossorigin', 'datetime', 'default', 'dir', 'disabled', 'download', 'enctype', 'face', 'for', 'headers', 'height', 'hidden', 'high', 'href', 'hreflang', 'id', 'integrity', 'ismap', 'label', 'lang', 'list', 'loop', 'low', 'max', 'maxlength', 'media', 'method', 'min', 'minlength', 'multiple', 'name', 'noshade', 'novalidate', 'nowrap', 'open', 'optimum', 'pattern', 'placeholder', 'poster', 'preload', 'pubdate', 'radiogroup', 'readonly', 'rel', 'required', 'rev', 'reversed', 'role', 'rows', 'rowspan', 'spellcheck', 'scope', 'selected', 'shape', 'size', 'sizes', 'span', 'srclang', 'start', 'src', 'srcset', 'step', 'style', 'summary', 'tabindex', 'title', 'type', 'usemap', 'valign', 'value', 'width', 'xmlns']);
 
 var svg$1 = freeze$2(['accent-height', 'accumulate', 'additive', 'alignment-baseline', 'ascent', 'attributename', 'attributetype', 'azimuth', 'basefrequency', 'baseline-shift', 'begin', 'bias', 'by', 'class', 'clip', 'clip-path', 'clip-rule', 'color', 'color-interpolation', 'color-interpolation-filters', 'color-profile', 'color-rendering', 'cx', 'cy', 'd', 'dx', 'dy', 'diffuseconstant', 'direction', 'display', 'divisor', 'dur', 'edgemode', 'elevation', 'end', 'fill', 'fill-opacity', 'fill-rule', 'filter', 'filterunits', 'flood-color', 'flood-opacity', 'font-family', 'font-size', 'font-size-adjust', 'font-stretch', 'font-style', 'font-variant', 'font-weight', 'fx', 'fy', 'g1', 'g2', 'glyph-name', 'glyphref', 'gradientunits', 'gradienttransform', 'height', 'href', 'id', 'image-rendering', 'in', 'in2', 'k', 'k1', 'k2', 'k3', 'k4', 'kerning', 'keypoints', 'keysplines', 'keytimes', 'lang', 'lengthadjust', 'letter-spacing', 'kernelmatrix', 'kernelunitlength', 'lighting-color', 'local', 'marker-end', 'marker-mid', 'marker-start', 'markerheight', 'markerunits', 'markerwidth', 'maskcontentunits', 'maskunits', 'max', 'mask', 'media', 'method', 'mode', 'min', 'name', 'numoctaves', 'offset', 'operator', 'opacity', 'order', 'orient', 'orientation', 'origin', 'overflow', 'paint-order', 'path', 'pathlength', 'patterncontentunits', 'patterntransform', 'patternunits', 'points', 'preservealpha', 'preserveaspectratio', 'primitiveunits', 'r', 'rx', 'ry', 'radius', 'refx', 'refy', 'repeatcount', 'repeatdur', 'restart', 'result', 'rotate', 'scale', 'seed', 'shape-rendering', 'specularconstant', 'specularexponent', 'spreadmethod', 'stddeviation', 'stitchtiles', 'stop-color', 'stop-opacity', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stroke-opacity', 'stroke', 'stroke-width', 'style', 'surfacescale', 'tabindex', 'targetx', 'targety', 'transform', 'text-anchor', 'text-decoration', 'text-rendering', 'textlength', 'type', 'u1', 'u2', 'unicode', 'values', 'viewbox', 'visibility', 'version', 'vert-adv-y', 'vert-origin-x', 'vert-origin-y', 'width', 'word-spacing', 'wrap', 'writing-mode', 'xchannelselector', 'ychannelselector', 'x', 'x1', 'x2', 'xmlns', 'y', 'y1', 'y2', 'z', 'zoomandpan']);
 
@@ -171,7 +171,7 @@ function createDOMPurify() {
    * Version label, exposed for easier checks
    * if DOMPurify is up to date or not
    */
-  DOMPurify.version = '1.0.11';
+  DOMPurify.version = '2.0.1';
 
   /**
    * Array of elements that DOMPurify removed during sanitation.
@@ -189,6 +189,7 @@ function createDOMPurify() {
 
   var originalDocument = window.document;
   var useDOMParser = false;
+  var removeSVGAttr = false;
   var removeTitle = false;
 
   var document = window.document;
@@ -242,6 +243,7 @@ function createDOMPurify() {
       IS_SCRIPT_OR_DATA$$1 = IS_SCRIPT_OR_DATA,
       ATTR_WHITESPACE$$1 = ATTR_WHITESPACE;
   var IS_ALLOWED_URI$$1 = IS_ALLOWED_URI;
+
   /**
    * We consider the elements and attributes below to be safe. Ideally
    * don't add any new ones but feel free to remove unwanted ones.
@@ -305,6 +307,10 @@ function createDOMPurify() {
    * DOMPurify. */
   var RETURN_DOM_IMPORT = false;
 
+  /* Try to return a Trusted Type object instead of a string, retrun a string in
+   * case Trusted Types are not supported  */
+  var RETURN_TRUSTED_TYPE = false;
+
   /* Output should be free from DOM clobbering attacks? */
   var SANITIZE_DOM = true;
 
@@ -319,7 +325,7 @@ function createDOMPurify() {
   var USE_PROFILES = {};
 
   /* Tags to ignore content of when KEEP_CONTENT is true */
-  var FORBID_CONTENTS = addToSet({}, ['audio', 'head', 'math', 'script', 'style', 'template', 'svg', 'video']);
+  var FORBID_CONTENTS = addToSet({}, ['audio', 'colgroup', 'head', 'math', 'script', 'style', 'template', 'thead', 'svg', 'video']);
 
   /* Tags that are safe for data: URIs */
   var DATA_URI_TAGS = addToSet({}, ['audio', 'video', 'img', 'source', 'image']);
@@ -368,6 +374,7 @@ function createDOMPurify() {
     RETURN_DOM = cfg.RETURN_DOM || false; // Default false
     RETURN_DOM_FRAGMENT = cfg.RETURN_DOM_FRAGMENT || false; // Default false
     RETURN_DOM_IMPORT = cfg.RETURN_DOM_IMPORT || false; // Default false
+    RETURN_TRUSTED_TYPE = cfg.RETURN_TRUSTED_TYPE || false; // Default false
     FORCE_BODY = cfg.FORCE_BODY || false; // Default false
     SANITIZE_DOM = cfg.SANITIZE_DOM !== false; // Default true
     KEEP_CONTENT = cfg.KEEP_CONTENT !== false; // Default true
@@ -442,9 +449,10 @@ function createDOMPurify() {
       addToSet(ALLOWED_TAGS, ['html', 'head', 'body']);
     }
 
-    /* Add tbody to ALLOWED_TAGS in case tables are permitted, see #286 */
+    /* Add tbody to ALLOWED_TAGS in case tables are permitted, see #286, #365 */
     if (ALLOWED_TAGS.table) {
       addToSet(ALLOWED_TAGS, ['tbody']);
+      delete FORBID_TAGS.tbody;
     }
 
     // Prevent further manipulation of configuration.
@@ -552,12 +560,12 @@ function createDOMPurify() {
   //
   // So we feature detect the Firefox bug and use the DOMParser if necessary.
   //
-  // MS Edge, in older versions, is affected by an mXSS behavior. The second
-  // check tests for the behavior and fixes it if necessary.
+  // Chrome 77 and other versions ship an mXSS bug that caused a bypass to
+  // happen. We now check for the mXSS trigger and react accordingly.
   if (DOMPurify.isSupported) {
     (function () {
       try {
-        var doc = _initDocument('<svg><p><textarea><img src="</textarea><img src=x onerror=1//">');
+        var doc = _initDocument('<svg><p><textarea><img src="</textarea><img src=x abc=1//">');
         if (doc.querySelector('svg img')) {
           useDOMParser = true;
         }
@@ -569,6 +577,15 @@ function createDOMPurify() {
         var doc = _initDocument('<x/><title>&lt;/title&gt;&lt;img&gt;');
         if (doc.querySelector('title').innerHTML.match(/<\/title/)) {
           removeTitle = true;
+        }
+      } catch (error) {}
+    })();
+
+    (function () {
+      try {
+        var doc = _initDocument('<svg></p></svg>');
+        if (doc.querySelector('svg p')) {
+          removeSVGAttr = true;
         }
       } catch (error) {}
     })();
@@ -782,6 +799,7 @@ function createDOMPurify() {
    *
    * @param  {Node} currentNode to sanitize
    */
+  // eslint-disable-next-line complexity
   var _sanitizeAttributes = function _sanitizeAttributes(currentNode) {
     var attr = void 0;
     var value = void 0;
@@ -823,6 +841,11 @@ function createDOMPurify() {
       hookEvent.keepAttr = true;
       _executeHook('uponSanitizeAttribute', currentNode, hookEvent);
       value = hookEvent.attrValue;
+
+      /* Check for possible Chrome mXSS */
+      if (removeSVGAttr && value.match(/<\//)) {
+        _forceRemove(currentNode);
+      }
 
       /* Remove attribute */
       // Safari (iOS + Mac), last tested v8.0.5, crashes if you try to
@@ -995,7 +1018,7 @@ function createDOMPurify() {
       }
     } else {
       /* Exit directly if we have nothing to do */
-      if (!RETURN_DOM && !SAFE_FOR_TEMPLATES && !WHOLE_DOCUMENT && dirty.indexOf('<') === -1) {
+      if (!RETURN_DOM && !SAFE_FOR_TEMPLATES && !WHOLE_DOCUMENT && RETURN_TRUSTED_TYPE && dirty.indexOf('<') === -1) {
         return trustedTypesPolicy ? trustedTypesPolicy.createHTML(dirty) : dirty;
       }
 
@@ -1079,7 +1102,7 @@ function createDOMPurify() {
       serializedHTML = serializedHTML.replace(ERB_EXPR$$1, ' ');
     }
 
-    return trustedTypesPolicy ? trustedTypesPolicy.createHTML(serializedHTML) : serializedHTML;
+    return trustedTypesPolicy && RETURN_TRUSTED_TYPE ? trustedTypesPolicy.createHTML(serializedHTML) : serializedHTML;
   };
 
   /**
