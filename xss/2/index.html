@@ -1,0 +1,77 @@
+<!doctype html><meta charset=utf-8>
+<title>SecurityMB's XSS Challenge #2</title>
+<style>
+* {
+  font-family: monospace;
+}  
+textarea {
+  width:100%;
+  height:90px;
+}
+iframe {
+  border: 1px solid;
+  width: 100%;
+  height: 200px;
+}
+</style>
+<h1>XSS challenge #2</h1>
+<p><b>Rules:</b></p>
+<ul>
+<li>Please enter some HTML. It gets sanitized and inserted to a &lt;div>.</li>
+<li>The task is: execute <code>alert(1)</code>.</li>
+<li>The solution must work on current version of at least one major browser (Chrome/Edge, Firefox, Safari).</li>
+<li>If you find a solution, please DM me at Twitter: <a href="https://twitter.com/SecurityMB">@SecurityMB</a>.</li>
+<li>The challenge is based on code seen in the wild.</li>
+</ul>
+
+<textarea autofocus oninput=process() id=input></textarea><br>
+<script>
+    const input = document.getElementById('input');
+    const getInput = () => input.value;
+    const mainUrl = location.href.split('?')[0];
+    const iframe = document.getElementById('ifr');
+    input.value = new URL(location).searchParams.get('xss');
+    
+    function sanitize(input) {
+        const TAG_REGEX = /<\/?(\w*)([^>]*)>/gmi;
+        const COMMENT_REGEX = /<!--.*?-->/gmi;
+        const END_TAG_REGEX = /^<\//;
+        // Taken from XSS Cheat Sheet by Portswigger
+        const FORBIDDEN_ATTRS = ["onactivate","onafterprint","onanimationcancel","onanimationend","onanimationiteration","onanimationstart","onauxclick","onbeforeactivate","onbeforecopy","onbeforecut","onbeforedeactivate","onbeforepaste","onbeforeprint","onbeforeunload","onbegin","onblur","onbounce","oncanplay","oncanplaythrough","onchange","onclick","oncontextmenu","oncopy","oncut","ondblclick","ondeactivate","ondrag","ondragend","ondragenter","ondragleave","ondragover","ondragstart","ondrop","onend","onended","onerror","onfinish","onfocus","onfocusin","onfocusout","onhashchange","oninput","oninvalid","onkeydown","onkeypress","onkeyup","onload","onloadeddata","onloadedmetadata","onloadend","onloadstart","onmessage","onmousedown","onmouseenter","onmouseleave","onmousemove","onmouseout","onmouseover","onmouseup","onpageshow","onpaste","onpause","onplay","onplaying","onpointerover","onpointerdown","onpointerenter","onpointerleave","onpointermove","onpointerout","onpointerup","onpointerrawupdate","onpopstate","onreadystatechange","onrepeat","onreset","onresize","onscroll","onsearch","onseeked","onseeking","onselect","onstart","onsubmit","ontimeupdate","ontoggle","ontouchstart","ontouchend","ontouchmove","ontransitioncancel","ontransitionend","ontransitionrun","onunhandledrejection","onunload","onvolumechange","onwaiting","onwheel"];
+        const FORBIDDEN_TAGS = ["script", "style", "noscript", "template", "svg", "math"];
+        
+        let sanitized = input;
+    
+        sanitized = sanitized.replace(COMMENT_REGEX, '');
+        sanitized = sanitized.replace(TAG_REGEX, (wholeTag, tagName, attributes) => {
+            tagName = tagName.toLowerCase();
+            
+            if (FORBIDDEN_TAGS.includes(tagName)) return '';
+            
+            if (END_TAG_REGEX.test(wholeTag)) {
+                return `</${tagName}>`;
+            }
+            for (let attr of FORBIDDEN_ATTRS) {
+                attributes = attributes.replace(new RegExp(attr + '\\s*=', 'gi'), '_ROBUST_XSS_PROTECTION_=');
+            }
+            
+            return `<${tagName}${attributes}>`
+        });
+        
+        
+        return sanitized;
+        
+    }
+    
+    function process() {
+        const input = getInput();
+        history.replaceState(null, null,  '?xss=' + encodeURIComponent(input));
+        
+        const div = document.createElement('div');
+        div.innerHTML = sanitize(input);
+        // document.body.appendChild(div)
+    }
+    
+    process();
+
+</script>
