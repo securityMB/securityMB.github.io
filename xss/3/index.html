@@ -1,0 +1,33 @@
+<!doctype html><meta charset=utf-8>
+<title>SecurityMB's XSS Challenge #3</title>
+<style>
+* {
+  font-family: monospace;
+}  
+textarea {
+  width:100%;
+  height:90px;
+}
+iframe {
+  border: 1px solid;
+  width: 100%;
+  height: 200px;
+}
+</style>
+
+<body data-script1="console.log('loaded')" data-script2="window.name = 'test-xss'">
+    
+<h1>XSS challenge #3</h1>
+<p><b>Rules:</b></p>
+<ul>
+<li>The task is: execute <code>alert(document.domain)</code>.</li>
+<li>The solution must work on current version of at least one major browser (Chrome, Edge, Safari, Firefox). It might be marginally better to use Safari, though.</li>
+<li>If you find a solution, please DM me at Twitter: <a href="https://twitter.com/SecurityMB">@SecurityMB</a>.</li>
+</ul>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        for (let attr of document.body.attributes) {
+            eval(attr.value);
+        }
+    });
+</script>
