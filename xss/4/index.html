@@ -50,19 +50,22 @@ iframe {
 <li>The goal is to bypass <strong>all sanitizers</strong> and execute alert().</li>
 <li>A proof that code was executed is a ✅ mark in all sanitizers.</li>
 <li>The solution must work on current version of at least one major browser (Chrome, Edge, Safari, Firefox).</li>
-<li>If you find a solution, please DM me at Twitter: <a href="https://twitter.com/SecurityMB">@SecurityMB</a>.</li>
+<li><s>If you find a solution, please DM me at Twitter: <a href="https://twitter.com/SecurityMB">@SecurityMB</a>.</s> Challenge is over! Check here for solution: <a href="https://research.securitum.com/prototype-pollution-and-bypassing-client-side-html-sanitizers/">https://research.securitum.com/prototype-pollution-and-bypassing-client-side-html-sanitizers/</a></li>
 </ul>
 <p><b>Leaderboard</b></p>
 <ol>
   <li><a href="https://twitter.com/terjanq">@terjanq</a>: URL length: 238</li>
+  <li><a href="https://twitter.com/avr4mit">@avr4mit</a>: URL length: 252</li>
   <li><a href="https://twitter.com/CmdEngineer_">@CmdEngineer_</a>: URL length: 254</li>
-  <li><a href="https://twitter.com/avr4mit">@avr4mit</a>: URL length: 258</li>
+  <li><a href="https://twitter.com/l4wio">@l4wio</a>: URL length: 285</li>
   <li><a href="https://twitter.com/bananabr">@bananabr</a>: URL length: 288</li>
   <li><a href="https://twitter.com/53c0nd_2473">@53c0nd_2473</a>: URL length: 318</li>
   <li><a href="https://twitter.com/abcdsh_">@abcdsh_</a>: URL length: 320</li>
   <li><a href="https://twitter.com/0xParrot">@0xParrot</a>: URL length: 341</li>
+  <li><a href="https://twitter.com/zsxsoft">@zsxsoft</a>: URL length: 356</li>
   <li><a href="https://twitter.com/po6ix">@po6ix</a>: URL length: 361</li>
   <li><a href="https://twitter.com/S1r1u5_">@S1r1u5_</a>: URL length: 376</li>
+  <li><a href="https://twitter.com/kos_michal">@kos_michal</a>: URL length: 401</li>
 </ol>
 <p><b>JSON object:</b></p>
 <textarea id=json>{}</textarea>
@@ -114,6 +117,19 @@ iframe {
     {
       name: 'DOMPurify',
       html:  `<script src=https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.0.12/purify.min.js><\/script>
+        <script>
+        const sanitized = DOMPurify.sanitize(html);
+        document.body.innerHTML = sanitized;
+        parent.postMessage({
+          name,
+          random,
+          sanitized,
+        }, '*');
+        <\/script>`,
+    },
+    {
+      name: 'DOMPurify 2.0.14',
+      html:  `<script src=https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.0.14/purify.min.js><\/script>
         <script>
         const sanitized = DOMPurify.sanitize(html);
         document.body.innerHTML = sanitized;
