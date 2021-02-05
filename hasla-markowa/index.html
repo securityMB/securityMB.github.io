@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/papercss@1.8.2/dist/paper.min.css"
+    />
+    <title>Hasła Markowa</title>
+  </head>
+  <body>
+    <div id="app" class="paper container">
+      <h1>Hasła Markowa</h1>
+      <div class="form-group">
+        <label for="url">Wpisz URL do utworu:</label>
+        <input style="width: 100%" name="url" v-model="url" id="url" />
+        <label for="known">... lub wybierz jeden z przykładowych:</label>
+        <select v-model="knownSelected">
+          <option v-for="known in knownUrls" v-bind:value="known.url">
+            {{ known.name }}
+          </option>
+        </select>
+        <label for="curr">Długość stanu</label>
+        <input v-model.number="currentStateSize" type="number" id="curr" />
+        <label for="next">Długość kolejnego stanu</label>
+        <input v-model.number="nextStateSize" id="next" type="number" />
+        <br /><br />
+        <button @click="regenerateModel">Przygotuj model</button>
+      </div>
+      <hr />
+      <template v-if="usedUrl != ''">
+        <small>
+          Praca na modelu wygenerowanym na podstawie
+          <a :href="usedUrl">{{ usedUrl }}</a>
+        </small>
+        <p></p>
+        <button @click="generatePasswords">Wygeneruj hasła</button>
+        <ul>
+          <li v-for="password of generatedPasswords">{{ password }}</li>
+        </ul>
+      </template>
+      <template v-else> Najpierw przygotuj model! </template>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+    <script>
+      const app = new Vue({
+        el: "#app",
+        data: {
+          knownUrls: [
+            {
+              name: "Pan Tadeusz",
+              url:
+                "https://lektury.mibe.workers.dev/media/book/txt/pan-tadeusz.txt",
+            },
+            {
+              name: "Chłopi, część IV",
+              url:
+                "https://lektury.mibe.workers.dev/media/book/txt/chlopi-czesc-czwarta-lato.txt",
+            },
+            {
+              name: "Mały książę",
+              url:
+                "https://lektury.mibe.workers.dev/media/book/txt/saint-exupery-maly-ksiaze.txt",
+            },
+          ],
+          model: new Map(),
+          currentStateSize: 1,
+          nextStateSize: 2,
+          knownSelected: "",
+          url:
+            "https://lektury.mibe.workers.dev/media/book/txt/pan-tadeusz.txt",
+          usedUrl: "",
+          generatedPasswords: [],
+          passwordLength: 8,
+        },
+        methods: {
+          async regenerateModel() {
+            /** @type {Map<string, string[]>} */
+            const model = this.model;
+            model.clear();
+            const text = await fetch(this.url).then((r) => r.text());
+            this.usedUrl = this.url;
+            this.generatedPasswords = [];
+            // Remove all punctuation (ie. characters that are neither
+            // lower-case letters or spaces)
+            const newText = text.toLowerCase().replace(/[^\p{Ll}\s]+/gu, "");
+            window.newText = newText;
+
+            const split = newText.split(/\s+/);
+            /** @type {string} */
+            let currentState;
+            /** @type {string} */
+            let nextState;
+            for (let i = 0; i < split.length; ++i) {
+              const currentStart = i + 1 - this.currentStateSize;
+              const currentEnd = currentStart + this.currentStateSize;
+              currentState = split.slice(currentStart, currentEnd).join(" ");
+
+              const nextStart = i + 1;
+              const nextEnd = nextStart + this.nextStateSize;
+              nextState = split.slice(nextStart, nextEnd).join(" ");
+
+              if (model.has(currentState)) {
+                model.get(currentState).push(nextState);
+              } else {
+                model.set(currentState, [nextState]);
+              }
+            }
+          },
+          generatePassword() {
+            /** @type {Map<string, string[]>} */
+            const model = this.model;
+
+            /** @type {string} */
+            let retValue = "";
+
+            const startingPoint = randomElement(Array.from(model.keys()));
+            const passwordLength = this.passwordLength;
+            let state = startingPoint;
+            retValue += startingPoint;
+            for (let i = 0; i < passwordLength; ++i) {
+              const nextState = model.get(state);
+              retValue += " " + randomElement(nextState);
+              retValue = retValue.trim();
+              state = retValue
+                .split(" ")
+                .slice(-this.currentStateSize)
+                .join(" ");
+            }
+            return retValue;
+          },
+          generatePasswords() {
+            this.generatedPasswords = [];
+            for (let i = 0; i < 10; ++i) {
+              this.generatedPasswords.push(this.generatePassword());
+            }
+          },
+        },
+        watch: {
+          knownSelected(val) {
+            this.url = val;
+          },
+        },
+      });
+      function randomElement(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+      }
+    </script>
+  </body>
+</html>
