@@ -1,0 +1,100 @@
+<!DOCTYPE html> <meta charset="utf-8" />
+<title>XSS Challenge #5</title>
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui"
+/>
+
+<div id="app">
+  <h1>XSS Challenge #5</h1>
+  <h2>Rules</h2>
+  <ul>
+    <li>
+      There's been a
+      <a
+        href="https://github.com/whatwg/html/commit/f690ad909ddc97ea3ff50740c270396cbe676261"
+        >recent change in HTML standard</a
+      >
+      that alters behaviour of breaking out of foreign content in
+      <code>innerHTML</code>.
+    </li>
+    <li>The previous behaviour could be abused to mutation XSS in Firefox.</li>
+    <li>
+      Everything you input below will be sanitized by a handmade sanitizer and
+      written to <code>iframe.srcdoc</code>.
+    </li>
+    <li>
+      Can you find a way to execute <code>alert(document.domain)</code> in
+      Firefox?
+    </li>
+    <li>
+      Reply to my <a href="https://twitter.com/securitymb">tweet</a> when you
+      do!
+    </li>
+  </ul>
+  <h2>Safe HTML sanitizer</h2>
+  <p>Input:</p>
+  <textarea
+    v-model="input"
+    @input="updateUrl"
+    placeholder="Enter HTML here"
+    style="width: 100%; height: 100px"
+  ></textarea>
+  <p>Output:</p>
+  <pre><code>{{ sanitized }}</code></pre>
+  <p>Iframe:</p>
+  <iframe width="100%" :srcdoc="sanitized"></iframe>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+<script>
+  function sanitize(input) {
+    const template = document.createElement("template");
+    template.innerHTML = input;
+    const content = template.content;
+    // Remove all attributes of all elements besides aria-* for accessibility
+    Array.from(content.querySelectorAll("*")).forEach((element) => {
+      const attrs = Array.from(element.attributes);
+      attrs.forEach(
+        (attr) =>
+          !attr.name.startsWith("aria-") && element.removeAttributeNode(attr)
+      );
+    });
+
+    // Remove tags that are known to cause trouble
+    const BLOCKED_TAGS = "script, style, template, form, applet, object";
+    Array.from(content.querySelectorAll(BLOCKED_TAGS)).forEach((element) =>
+      element.remove()
+    );
+
+    return template.innerHTML;
+  }
+
+  const app = new Vue({
+    el: "#app",
+    mounted() {
+      this.input = atob(decodeURIComponent(location.hash.slice(1)));
+    },
+    computed: {
+      sanitized() {
+        return sanitize(this.input);
+      },
+      url() {
+        return (
+          location.origin +
+          location.pathname +
+          "#" +
+          encodeURIComponent(btoa(this.input))
+        );
+      },
+    },
+    data: {
+      input: "",
+    },
+    methods: {
+      updateUrl() {
+        history.replaceState(null, null, this.url);
+      },
+    },
+  });
+</script>
