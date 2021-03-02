@@ -65,7 +65,8 @@
     });
 
     // Remove tags that are known to cause trouble
-    const BLOCKED_TAGS = "script, style, template, form, applet, object";
+    const BLOCKED_TAGS =
+      "script, style, template, form, applet, object, mglyph, malignmark";
     Array.from(content.querySelectorAll(BLOCKED_TAGS)).forEach((element) =>
       element.remove()
     );
