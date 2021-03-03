@@ -28,6 +28,16 @@
       Firefox?
     </li>
     <li>
+      <b>Update</b>:
+      <a href="https://twitter.com/PwnFunction">@PwnFunction</a> found a
+      <a href="https://twitter.com/PwnFunction/status/1367014227764862979"
+        >nice solution</a
+      >
+      that utilizes <code>&lt;noscript></code> which was an expected way to
+      solve the challenge. Hence <code>&lt;noscript></code> is also disallowed
+      now.
+    </li>
+    <li>
       Reply to my
       <a href="https://twitter.com/SecurityMB/status/1366823660707807236"
         >tweet</a
@@ -66,7 +76,7 @@
 
     // Remove tags that are known to cause trouble
     const BLOCKED_TAGS =
-      "script, style, template, form, applet, object, mglyph, malignmark";
+      "script, style, template, form, applet, object, mglyph, malignmark, noscript";
     Array.from(content.querySelectorAll(BLOCKED_TAGS)).forEach((element) =>
       element.remove()
     );
